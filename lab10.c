@@ -116,13 +116,21 @@ void inputStudentData()
 
 void studentRanking() // not done
 {
+    int temp = 0;
     for (int i = 0; i < count; i++)
     {
-        for (int j = 0; j < count; j++)
+        st[i].rank++;
+    }
+
+    for (int i = 0; i < count - 1; i++)
+    {
+        for (int j = 0; j < count - 1 - i; j++)
         {
-            if (st[i].avg < st[j].avg)
+            if (st[j].avg > st[j + 1].avg)
             {
-                st[i].rank++;
+                temp = st[j].rank;
+                st[j].rank = st[j + 1].rank;
+                st[j + 1].rank = temp;
             }
         }
     }
