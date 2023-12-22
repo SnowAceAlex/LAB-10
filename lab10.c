@@ -12,7 +12,7 @@ struct Student
     char rank[100];
 } st[55];
 
-int count; // use to count the total number of student
+int count = 0; // use to count the total number of student
 
 void inputStudentData();
 void studentRanking();
@@ -23,10 +23,12 @@ void searchStudentName();
 void searchStudentId();
 void editStudentInfo();
 void deleteStudent();
+void exportDataToFile();
+void importDataFromFile();
 
 int main()
 {
-    struct Student *st = NULL;
+
     int choice, choice2, choice3;
     do
     {
@@ -90,6 +92,13 @@ int main()
             break;
         case 6:
             deleteStudent();
+            break;
+        case 7:
+            exportDataToFile();
+            break;
+        case 8:
+            importDataFromFile();
+            break;
 
         case 0:
             printf("Exiting program.\n");
@@ -107,38 +116,43 @@ int main()
 
 void inputStudentData()
 {
+    int n;
+    printf("Enter the number of students: ");
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++)
+    {
+        printf("Add the Students Details\n");
+        printf("-------------------------\n");
 
-    printf("Add the Students Details\n");
-    printf("-------------------------\n");
+        printf("Enter the ID: ");
+        scanf("%s", &st[i].id);
+        getchar();
+        printf("ID Information Added\n");
 
-    printf("Enter the ID: ");
-    scanf("%s", &st[count].id);
-    getchar();
-    printf("ID Information Added\n");
+        printf("\nEnter the full name of student: ");
+        scanf("%[^\n]", &st[i].fname);
+        getchar();
+        printf("Name Information Added\n");
 
-    printf("\nEnter the full name of student: ");
-    scanf("%[^\n]", &st[count].fname);
-    getchar();
-    printf("Name Information Added\n");
+        printf("\nEnter the date of birth: ");
+        scanf("%s", &st[i].dob);
+        printf("Date of Birth Information Added\n");
 
-    printf("\nEnter the date of birth: ");
-    scanf("%s", &st[count].dob);
-    printf("Date of Birth Information Added\n");
+        printf("\nEnter your department: ");
+        scanf("%s", &st[i].department);
+        printf("Department Information Added\n");
 
-    printf("\nEnter your department: ");
-    scanf("%s", &st[count].department);
-    printf("Department Information Added\n");
+        printf("\nEnter your scores (Math English Programming): ");
+        scanf("%f %f %f", &st[i].math, &st[i].english, &st[i].programming);
+        printf("Score Information Added\n");
 
-    printf("\nEnter your scores (Math English Programming): ");
-    scanf("%f %f %f", &st[count].math, &st[count].english, &st[count].programming);
-    printf("Score Information Added\n");
+        st[i].avg = (st[i].math + st[i].english + st[i].programming) / 3;
 
-    st[count].avg = (st[count].math + st[count].english + st[count].programming) / 3;
-
-    count++;
+        count++;
+    }
 }
 
-void studentRanking() // not done
+void studentRanking()
 {
     for (int i = 0; i < count; i++)
     {
@@ -370,4 +384,51 @@ void deleteStudent()
     {
         printf("Student not found with ID: %s\n", removeId);
     }
+}
+
+void exportDataToFile()
+{
+    FILE *file = fopen("student_data.txt", "w");
+
+    if (file == NULL)
+    {
+        printf("Error opening file for writing.\n");
+        return;
+    }
+
+    for (int i = 0; i < count; ++i)
+    {
+        fprintf(file, "%s;%s;%s;%s;%.2f;%.2f;%.2f;%.2f;%s\n", st[i].id, st[i].fname,
+                st[i].dob, st[i].department, st[i].math, st[i].english,
+                st[i].programming, st[i].avg, st[i].rank);
+    }
+
+    fclose(file);
+
+    printf("Data exported to file successfully.\n");
+}
+
+void importDataFromFile()
+{
+    FILE *file = fopen("student_data.txt", "r");
+
+    if (file == NULL)
+    {
+        printf("Error opening file for reading.\n");
+        return;
+    }
+
+    // Read the number of students from the file
+    fscanf(file, "%d\n", count);
+
+    for (int i = 0; i < count; ++i)
+    {
+        fscanf(file, "%s;%[^;];%[^;];%[^;];%f;%f;%f;%f;%s\n", &(st)[i].id, (st)[i].fname,
+               (st)[i].dob, (st)[i].department, &(st)[i].math, &(st)[i].english,
+               &(st)[i].programming, &(st)[i].avg, &(st)[i].rank);
+    }
+
+    fclose(file);
+
+    printf("Data imported from file successfully.\n");
 }
