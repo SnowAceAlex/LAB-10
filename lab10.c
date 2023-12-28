@@ -10,7 +10,9 @@ struct Student
     char dob[100];
     float avg, math, english, programming;
     char rank[100];
-} st[55];
+};
+
+struct Student *st = NULL; // dynamic array
 
 int count = 0; // use to count the total number of student
 
@@ -111,6 +113,8 @@ int main()
 
     } while (choice != 0);
 
+    free(st);
+
     return 0;
 }
 
@@ -119,6 +123,12 @@ void inputStudentData()
     int n;
     printf("Enter the number of students: ");
     scanf("%d", &n);
+    st = (struct Student *)malloc(n * sizeof(struct Student));
+    if (st == NULL)
+    {
+        printf("Memory allocation failed. Exiting program.\n");
+        exit(EXIT_FAILURE);
+    }
     for (int i = 0; i < n; i++)
     {
         printf("Add the Students Details\n");
@@ -378,6 +388,15 @@ void deleteStudent()
 
         count -= 1;
 
+        // Resize the dynamic array
+        st = (struct Student *)realloc(st, count * sizeof(struct Student));
+
+        if (st == NULL && count > 0)
+        {
+            printf("Memory reallocation failed. Exiting program.\n");
+            exit(EXIT_FAILURE);
+        }
+
         printf("Student with ID %s removed successfully.\n", removeId);
     }
     else
@@ -420,6 +439,14 @@ void importDataFromFile()
 
     // Read the number of students from the file
     fscanf(file, "%d\n", count);
+
+    // Allocate memory for dynamic array
+    st = (struct Student *)malloc(count * sizeof(struct Student));
+    if (st == NULL)
+    {
+        printf("Memory allocation failed. Exiting program.\n");
+        exit(EXIT_FAILURE);
+    }
 
     for (int i = 0; i < count; ++i)
     {
